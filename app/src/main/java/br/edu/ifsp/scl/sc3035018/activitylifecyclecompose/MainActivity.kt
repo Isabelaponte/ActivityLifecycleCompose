@@ -22,7 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 import br.edu.ifsp.scl.sc3035018.activitylifecyclecompose.ui.theme.ActivityLifecycleComposeTheme
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,26 +45,26 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(modifier: Modifier = Modifier, mainViewModel: MainViewModel = viewModel()) {
     var name by rememberSaveable { mutableStateOf("" ) }
-    var age by rememberSaveable  { mutableStateOf("") }
+    var age by rememberSaveable  { mutableStateOf("" ) }
 
     Column (
         modifier = modifier.fillMaxSize()
     ) {
         TextField(
-            value = name,
+            value = mainViewModel.name, // responsabilidade do que será mostrado na tela fica no MODEL
             label = { Text("Name") },
             keyboardOptions = KeyboardOptions(keyboardType =  KeyboardType.Text),
             modifier = Modifier.fillMaxWidth().padding(20.dp),
-            onValueChange = { name = it }
+            onValueChange = { mainViewModel.updateName(it) }
         )
         TextField(
-            value = age,
+            value = mainViewModel.age.toString(),
             label = { Text("Idade") },
             keyboardOptions = KeyboardOptions(keyboardType =  KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth(),
-            onValueChange = { age = it}
+            modifier = Modifier.fillMaxWidth().padding(20.dp),
+            onValueChange = { mainViewModel.updateAge(it.toIntOrNull()) }
         )
     }
 }
