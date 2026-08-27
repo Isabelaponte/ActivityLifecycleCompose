@@ -5,20 +5,23 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class MainViewModel: ViewModel() {
-    var name by mutableStateOf("")
-        private set
+    private val _uiState = MutableStateFlow(User()) //estado mutável será realizado pelo _uiState
+    val uiState: StateFlow<User> = _uiState.asStateFlow() //somente get
 
-    var age by mutableIntStateOf(0)
-        private set
+    val x = mutableStateOf(0) //pq a mudança da estratégia? nao melhora desempenho, mas é melhor na arquitetura por causa da divisão de responsabilidades
 
     fun updateName(name: String ) {
-        this.name = name
+        _uiState.value.name = name
     }
 
     fun updateAge(age: Int?) {
-        this.age = age ?: 0
+        _uiState.update { it.copy(age = age) } //forma melhor de realizar o set algo
     }
 
 }
